@@ -1,63 +1,55 @@
 <?php
 
+session_name("KVENTERPRISE_SESSION");
 session_start();
 
-if (!isset($_SESSION["kv_logged_in"])) {
+if (!isset($_SESSION["kv_logged_in"]) || $_SESSION["kv_logged_in"] !== true) {
     header("Location: index.php");
     exit;
 }
 
-$username = $_SESSION["kv_username"] ?? "User";
-
 $products = [
     [
-        "code" => "CF-001",
+        "id" => "CF-001",
         "name" => "Premium Persian Cat Food",
-        "category" => "Dry Cat Food",
-        "stock" => 120,
-        "status" => "In Stock"
+        "category" => "Adult Cat Food",
+        "stock" => 24
     ],
     [
-        "code" => "CF-002",
+        "id" => "CF-002",
         "name" => "Indoor Adult Cat Food",
-        "category" => "Dry Cat Food",
-        "stock" => 85,
-        "status" => "In Stock"
+        "category" => "Adult Cat Food",
+        "stock" => 19
     ],
     [
-        "code" => "CF-003",
+        "id" => "CF-003",
         "name" => "Kitten Growth Formula",
         "category" => "Kitten Food",
-        "stock" => 64,
-        "status" => "In Stock"
+        "stock" => 15
     ],
     [
-        "code" => "CF-004",
+        "id" => "CF-004",
         "name" => "Sensitive Stomach Formula",
         "category" => "Specialized Food",
-        "stock" => 31,
-        "status" => "Low Stock"
+        "stock" => 5
     ],
     [
-        "code" => "CF-005",
+        "id" => "CF-005",
         "name" => "Grain-Free Salmon Cat Food",
-        "category" => "Premium Food",
-        "stock" => 18,
-        "status" => "Low Stock"
+        "category" => "Adult Cat Food",
+        "stock" => 8
     ],
     [
-        "code" => "CF-006",
+        "id" => "CF-006",
         "name" => "Chicken Adult Formula",
-        "category" => "Dry Cat Food",
-        "stock" => 0,
-        "status" => "Out of Stock"
+        "category" => "Adult Cat Food",
+        "stock" => 0
     ]
 ];
 
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -69,7 +61,7 @@ $products = [
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>KV Enterprise | Inventory</title>
+    <title>Inventory | KV Enterprise</title>
 
     <style>
 
@@ -81,7 +73,7 @@ $products = [
         }
 
         body {
-            background: #f4f6f9;
+            background: #f4f6f8;
             color: #1f2937;
         }
 
@@ -93,16 +85,16 @@ $products = [
             top: 0;
             width: 230px;
             height: 100vh;
-            background: #1e293b;
+            background: #111827;
             color: white;
             padding: 25px 15px;
         }
 
         .logo {
-            font-size: 22px;
+            font-size: 23px;
             font-weight: bold;
             margin-bottom: 35px;
-            padding-left: 10px;
+            padding-left: 12px;
         }
 
         .logo span {
@@ -111,70 +103,64 @@ $products = [
 
         .menu-title {
             font-size: 11px;
-            color: #94a3b8;
+            color: #9ca3af;
+            margin: 20px 12px 10px;
             text-transform: uppercase;
-            margin: 20px 10px 10px;
             letter-spacing: 1px;
         }
 
         .sidebar a {
             display: block;
-            color: #cbd5e1;
             text-decoration: none;
-            padding: 11px 10px;
-            border-radius: 6px;
+            color: #d1d5db;
+            padding: 12px;
+            border-radius: 7px;
             margin-bottom: 5px;
             font-size: 14px;
         }
 
         .sidebar a:hover,
         .sidebar a.active {
-            background: #334155;
+            background: #2563eb;
             color: white;
+        }
+
+        .logout {
+            margin-top: 25px;
+        }
+
+        .logout a {
+            color: #fca5a5;
         }
 
         /* MAIN */
 
         .main {
             margin-left: 230px;
-            padding: 30px;
+            padding: 35px;
         }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+        .header {
+            margin-bottom: 25px;
         }
 
-        .topbar h1 {
-            font-size: 26px;
-            margin-bottom: 5px;
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
         }
 
-        .topbar p {
-            color: #64748b;
-            font-size: 13px;
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
         }
 
-        .user {
-            text-align: right;
-            font-size: 13px;
-        }
-
-        .user span {
-            display: block;
-            color: #64748b;
-            margin-top: 4px;
-        }
-
-        /* PANEL */
+        /* INVENTORY PANEL */
 
         .panel {
             background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 9px;
-            padding: 22px;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
         }
 
         .panel-header {
@@ -188,21 +174,10 @@ $products = [
             font-size: 18px;
         }
 
-        .add-button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
+        .product-count {
+            color: #6b7280;
             font-size: 13px;
-            cursor: pointer;
         }
-
-        .add-button:hover {
-            background: #1d4ed8;
-        }
-
-        /* TABLE */
 
         .table-container {
             overflow-x: auto;
@@ -215,35 +190,29 @@ $products = [
 
         th {
             text-align: left;
-            padding: 13px;
-            background: #f8fafc;
-            color: #64748b;
+            padding: 13px 12px;
+            background: #f9fafb;
+            color: #6b7280;
             font-size: 12px;
             text-transform: uppercase;
         }
 
         td {
-            padding: 14px 13px;
+            padding: 15px 12px;
             border-top: 1px solid #e5e7eb;
-            font-size: 13px;
+            font-size: 14px;
         }
 
-        .product-code {
+        .product-id {
             font-weight: bold;
-            color: #475569;
+            color: #2563eb;
         }
-
-        .stock-number {
-            font-weight: bold;
-        }
-
-        /* STATUS */
 
         .status {
             display: inline-block;
-            padding: 5px 9px;
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -262,19 +231,9 @@ $products = [
             color: #b91c1c;
         }
 
-        /* FOOTER NOTE */
+        /* RESPONSIVE */
 
-        .notice {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 7px;
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        @media (max-width: 800px) {
+        @media (max-width: 700px) {
 
             .sidebar {
                 width: 200px;
@@ -285,12 +244,6 @@ $products = [
                 padding: 20px;
             }
 
-            .topbar {
-                align-items: flex-start;
-                gap: 15px;
-                flex-direction: column;
-            }
-
         }
 
     </style>
@@ -299,90 +252,61 @@ $products = [
 
 <body>
 
-
 <!-- SIDEBAR -->
 
 <div class="sidebar">
 
     <div class="logo">
-        KV <span>Enterprise</span>
+        KV<span>Enterprise</span>
     </div>
-
 
     <div class="menu-title">
         Main
     </div>
 
-
     <a href="dashboard.php">
         Dashboard
     </a>
-
 
     <a href="inventory.php" class="active">
         Inventory
     </a>
 
-
-    <a href="inventory.php">
-        Products
+    <a href="admin.php">
+        Administration
     </a>
-
-
-    <a href="inventory.php">
-        Stock Reports
-    </a>
-
 
     <div class="menu-title">
         Account
     </div>
 
+    <div class="logout">
 
-    <a href="index.php">
-        Logout
-    </a>
-
-</div>
-
-
-<!-- MAIN -->
-
-<div class="main">
-
-
-    <div class="topbar">
-
-        <div>
-
-            <h1>
-                Inventory
-            </h1>
-
-            <p>
-                Manage cat food products and stock levels
-            </p>
-
-        </div>
-
-
-        <div class="user">
-
-            <strong>
-                <?= htmlspecialchars($username) ?>
-            </strong>
-
-            <span>
-                Administrator
-            </span>
-
-        </div>
+        <a href="logout.php">
+            Logout
+        </a>
 
     </div>
 
+</div>
+
+<!-- MAIN CONTENT -->
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Inventory
+        </h1>
+
+        <p>
+            Cat food inventory records
+        </p>
+
+    </div>
 
     <div class="panel">
-
 
         <div class="panel-header">
 
@@ -390,12 +314,11 @@ $products = [
                 Product Inventory
             </h2>
 
-            <button class="add-button">
-                + Add Product
-            </button>
+            <span class="product-count">
+                <?= count($products) ?> products
+            </span>
 
         </div>
-
 
         <div class="table-container">
 
@@ -406,7 +329,7 @@ $products = [
                     <tr>
 
                         <th>
-                            Product Code
+                            Product ID
                         </th>
 
                         <th>
@@ -429,52 +352,60 @@ $products = [
 
                 </thead>
 
-
                 <tbody>
 
-                    <?php foreach ($products as $product): ?>
+                <?php foreach ($products as $product): ?>
 
-                        <?php
+                    <?php
 
-                        if ($product["status"] === "In Stock") {
-                            $statusClass = "in-stock";
-                        } elseif ($product["status"] === "Low Stock") {
-                            $statusClass = "low-stock";
-                        } else {
-                            $statusClass = "out-stock";
-                        }
+                    if ($product["stock"] === 0) {
 
-                        ?>
+                        $status = "Out of Stock";
+                        $statusClass = "out-stock";
 
-                        <tr>
+                    } elseif ($product["stock"] <= 8) {
 
-                            <td class="product-code">
-                                <?= htmlspecialchars($product["code"]) ?>
-                            </td>
+                        $status = "Low Stock";
+                        $statusClass = "low-stock";
 
-                            <td>
-                                <?= htmlspecialchars($product["name"]) ?>
-                            </td>
+                    } else {
 
-                            <td>
-                                <?= htmlspecialchars($product["category"]) ?>
-                            </td>
+                        $status = "In Stock";
+                        $statusClass = "in-stock";
 
-                            <td class="stock-number">
-                                <?= $product["stock"] ?>
-                            </td>
+                    }
 
-                            <td>
+                    ?>
 
-                                <span class="status <?= $statusClass ?>">
-                                    <?= htmlspecialchars($product["status"]) ?>
-                                </span>
+                    <tr>
 
-                            </td>
+                        <td class="product-id">
+                            <?= htmlspecialchars($product["id"]) ?>
+                        </td>
 
-                        </tr>
+                        <td>
+                            <?= htmlspecialchars($product["name"]) ?>
+                        </td>
 
-                    <?php endforeach; ?>
+                        <td>
+                            <?= htmlspecialchars($product["category"]) ?>
+                        </td>
+
+                        <td>
+                            <?= htmlspecialchars($product["stock"]) ?> units
+                        </td>
+
+                        <td>
+
+                            <span class="status <?= $statusClass ?>">
+                                <?= htmlspecialchars($status) ?>
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                <?php endforeach; ?>
 
                 </tbody>
 
@@ -482,21 +413,9 @@ $products = [
 
         </div>
 
-
-        <div class="notice">
-
-            Inventory records are maintained by KV Enterprise
-            administrators. Stock information is updated through
-            the internal inventory management system.
-
-        </div>
-
-
     </div>
 
-
 </div>
-
 
 </body>
 

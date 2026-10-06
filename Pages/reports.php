@@ -119,7 +119,6 @@ $recentAttacks = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -132,7 +131,6 @@ $recentAttacks = $stmt->fetchAll();
     >
 
     <title>Reports | Trap&Trace</title>
-
 
     <style>
 
@@ -520,32 +518,32 @@ $recentAttacks = $stmt->fetchAll();
     </div>
 
 
-    <a href="/TrapTrace/dashboard.php">
+    <a href="/dashboard.php">
         Dashboard
     </a>
 
 
-    <a href="/TrapTrace/Pages/monitoring.php">
+    <a href="/Pages/monitoring.php">
         Monitoring
     </a>
 
 
-    <a href="/TrapTrace/Pages/alerts.php">
+    <a href="/Pages/alerts.php">
         Alerts
     </a>
 
 
-    <a href="/TrapTrace/Pages/packet_logs.php">
+    <a href="/Pages/packet_logs.php">
         Packet Logs
     </a>
 
 
-    <a href="/TrapTrace/Pages/attackers.php">
+    <a href="/Pages/attackers.php">
         Attackers
     </a>
 
 
-    <a href="/TrapTrace/Pages/logs.php">
+    <a href="/Pages/logs.php">
         Logs
     </a>
 
@@ -555,12 +553,12 @@ $recentAttacks = $stmt->fetchAll();
     </div>
 
 
-    <a href="/TrapTrace/Pages/analytics.php">
+    <a href="/Pages/analytics.php">
         Analytics
     </a>
 
 
-    <a href="/TrapTrace/Pages/reports.php" class="active">
+    <a href="/Pages/reports.php" class="active">
         Reports
     </a>
 
@@ -570,14 +568,14 @@ $recentAttacks = $stmt->fetchAll();
     </div>
 
 
-    <a href="/TrapTrace/Pages/settings.php">
+    <a href="/Pages/settings.php">
         Honeypot Configuration
     </a>
 
 
     <div class="logout">
 
-        <a href="/TrapTrace/logout.php">
+        <a href="/logout.php">
             Logout
         </a>
 

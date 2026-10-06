@@ -53,7 +53,6 @@ $environment = "Local XAMPP Server";
             color: #1f2937;
         }
 
-
         /* =========================
            SIDEBAR
         ========================= */
@@ -114,7 +113,6 @@ $environment = "Local XAMPP Server";
             padding-top: 15px;
         }
 
-
         /* =========================
            MAIN CONTENT
         ========================= */
@@ -154,7 +152,6 @@ $environment = "Local XAMPP Server";
             color: #6b7280;
             font-size: 12px;
         }
-
 
         /* =========================
            STATUS CARD
@@ -198,7 +195,6 @@ $environment = "Local XAMPP Server";
             border-radius: 50%;
         }
 
-
         /* =========================
            CONFIGURATION GRID
         ========================= */
@@ -222,7 +218,6 @@ $environment = "Local XAMPP Server";
             font-size: 18px;
             margin-bottom: 20px;
         }
-
 
         /* =========================
            CONFIGURATION ROWS
@@ -252,7 +247,6 @@ $environment = "Local XAMPP Server";
             text-align: right;
         }
 
-
         /* =========================
            ENABLED BADGE
         ========================= */
@@ -273,7 +267,6 @@ $environment = "Local XAMPP Server";
             font-size: 11px;
         }
 
-
         /* =========================
            INFORMATION BOX
         ========================= */
@@ -288,7 +281,6 @@ $environment = "Local XAMPP Server";
             font-size: 13px;
         }
 
-
         /* =========================
            RESPONSIVE
         ========================= */
@@ -300,7 +292,6 @@ $environment = "Local XAMPP Server";
             }
 
         }
-
 
         @media (max-width: 700px) {
 
@@ -325,9 +316,7 @@ $environment = "Local XAMPP Server";
 
 </head>
 
-
 <body>
-
 
 <!-- =========================
      SIDEBAR
@@ -335,86 +324,71 @@ $environment = "Local XAMPP Server";
 
 <div class="sidebar">
 
-
     <div class="logo">
         Trap<span>&</span>Trace
     </div>
-
 
     <div class="menu-title">
         Main
     </div>
 
-
-    <a href="/TrapTrace/dashboard.php">
+    <!-- CORRECT ROOT PATHS -->
+    <a href="/dashboard.php">
         Dashboard
     </a>
 
-
-    <a href="/TrapTrace/Pages/monitoring.php">
+    <a href="/Pages/monitoring.php">
         Monitoring
     </a>
 
-
-    <a href="/TrapTrace/Pages/alerts.php">
+    <a href="/Pages/alerts.php">
         Alerts
     </a>
 
-
-    <a href="/TrapTrace/Pages/packet_logs.php">
+    <a href="/Pages/packet_logs.php">
         Packet Logs
     </a>
 
-
-    <a href="/TrapTrace/Pages/attackers.php">
+    <a href="/Pages/attackers.php">
         Attackers
     </a>
 
-
-    <a href="/TrapTrace/Pages/logs.php">
+    <a href="/Pages/logs.php">
         Logs
     </a>
-
 
     <div class="menu-title">
         Analysis
     </div>
 
-
-    <a href="/TrapTrace/Pages/analytics.php">
+    <a href="/Pages/analytics.php">
         Analytics
     </a>
 
-
-    <a href="/TrapTrace/Pages/reports.php">
+    <a href="/Pages/reports.php">
         Reports
     </a>
-
 
     <div class="menu-title">
         System
     </div>
 
-
     <a
-        href="/TrapTrace/Pages/settings.php"
+        href="/Pages/settings.php"
         class="active"
     >
         Honeypot Configuration
     </a>
 
-
     <div class="logout">
 
-        <a href="/TrapTrace/logout.php">
+        <a href="/logout.php">
             Logout
         </a>
 
     </div>
 
-
 </div>
-
 
 <!-- =========================
      MAIN CONTENT
@@ -422,11 +396,9 @@ $environment = "Local XAMPP Server";
 
 <div class="main">
 
-
     <!-- TOP BAR -->
 
     <div class="topbar">
-
 
         <div class="page-title">
 
@@ -440,7 +412,6 @@ $environment = "Local XAMPP Server";
 
         </div>
 
-
         <div class="user-info">
 
             <strong>
@@ -453,9 +424,7 @@ $environment = "Local XAMPP Server";
 
         </div>
 
-
     </div>
-
 
     <!-- =========================
          HONEYPOT STATUS
@@ -463,14 +432,11 @@ $environment = "Local XAMPP Server";
 
     <div class="status-card">
 
-
         <div class="status-header">
-
 
             <h2>
                 Honeypot Status
             </h2>
-
 
             <div class="status-badge">
 
@@ -480,12 +446,9 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
         </div>
 
-
     </div>
-
 
     <!-- =========================
          CONFIGURATION
@@ -493,16 +456,13 @@ $environment = "Local XAMPP Server";
 
     <div class="config-grid">
 
-
         <!-- HONEYPOT INFORMATION -->
 
         <div class="panel">
 
-
             <h2>
                 Honeypot Information
             </h2>
-
 
             <div class="config-row">
 
@@ -516,7 +476,6 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
             <div class="config-row">
 
                 <span class="config-label">
@@ -529,7 +488,6 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
             <div class="config-row">
 
                 <span class="config-label">
@@ -541,7 +499,6 @@ $environment = "Local XAMPP Server";
                 </span>
 
             </div>
-
 
             <div class="config-row">
 
@@ -559,19 +516,15 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
         </div>
-
 
         <!-- MONITORING CONFIGURATION -->
 
         <div class="panel">
 
-
             <h2>
                 Monitoring Configuration
             </h2>
-
 
             <div class="config-row">
 
@@ -589,7 +542,6 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
             <div class="config-row">
 
                 <span class="config-label">
@@ -605,7 +557,6 @@ $environment = "Local XAMPP Server";
                 </span>
 
             </div>
-
 
             <div class="config-row">
 
@@ -623,7 +574,6 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
             <div class="config-row">
 
                 <span class="config-label">
@@ -640,12 +590,9 @@ $environment = "Local XAMPP Server";
 
             </div>
 
-
         </div>
 
-
     </div>
-
 
     <!-- =========================
          SYSTEM INFORMATION
@@ -653,16 +600,15 @@ $environment = "Local XAMPP Server";
 
     <div class="panel">
 
-
         <h2>
             System Information
         </h2>
-
 
         <div class="info-box">
 
             Trap&Trace is currently configured to monitor the
             <strong>KV Enterprise</strong> web application honeypot.
+
             Detected suspicious activities can be recorded in the
             attack events database and displayed through the
             Monitoring, Alerts, Attackers, Analytics, and Reports
@@ -670,12 +616,9 @@ $environment = "Local XAMPP Server";
 
         </div>
 
-
     </div>
 
-
 </div>
-
 
 </body>
 

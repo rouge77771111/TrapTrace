@@ -3,42 +3,61 @@
 require_once "../auth.php";
 require_once "../config/database.php";
 
-/* =========================
-   PACKET STATISTICS
-========================= */
+/*
+|--------------------------------------------------------------------------
+| PACKET STATISTICS
+|--------------------------------------------------------------------------
+*/
 
-$totalPackets = $pdo
-    ->query("SELECT COUNT(*) FROM packet_capture_logs")
-    ->fetchColumn();
+$stmt = $pdo->query("
+    SELECT COUNT(*)
+    FROM packet_capture_logs
+");
 
-$tcpPackets = $pdo
-    ->query("
-        SELECT COUNT(*)
-        FROM packet_capture_logs
-        WHERE protocol = 'TCP'
-    ")
-    ->fetchColumn();
+$totalPackets = (int) $stmt->fetchColumn();
 
-$udpPackets = $pdo
-    ->query("
-        SELECT COUNT(*)
-        FROM packet_capture_logs
-        WHERE protocol = 'UDP'
-    ")
-    ->fetchColumn();
 
-/* =========================
-   PACKET LOGS
-========================= */
+$stmt = $pdo->query("
+    SELECT COUNT(*)
+    FROM packet_capture_logs
+    WHERE protocol = 'TCP'
+");
 
-$packets = $pdo
-    ->query("
-        SELECT *
-        FROM packet_capture_logs
-        ORDER BY captured_at DESC
-        LIMIT 100
-    ")
-    ->fetchAll();
+$tcpPackets = (int) $stmt->fetchColumn();
+
+
+$stmt = $pdo->query("
+    SELECT COUNT(*)
+    FROM packet_capture_logs
+    WHERE protocol = 'UDP'
+");
+
+$udpPackets = (int) $stmt->fetchColumn();
+
+
+/*
+|--------------------------------------------------------------------------
+| RECENT PACKETS
+|--------------------------------------------------------------------------
+*/
+
+$stmt = $pdo->query("
+    SELECT
+        id,
+        source_ip,
+        destination_ip,
+        protocol,
+        source_port,
+        destination_port,
+        packet_size,
+        packet_info,
+        captured_at
+    FROM packet_capture_logs
+    ORDER BY captured_at DESC
+    LIMIT 100
+");
+
+$packets = $stmt->fetchAll();
 
 ?>
 
@@ -54,25 +73,23 @@ $packets = $pdo
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Trap&Trace - Packet Logs</title>
+    <title>Packet Capture Logs | Trap&Trace</title>
 
     <style>
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f9;
+            background: #f5f7fb;
             color: #1f2937;
         }
 
-        /* =========================
-           SIDEBAR
-        ========================= */
+        /* SIDEBAR */
 
         .sidebar {
             position: fixed;
@@ -85,38 +102,37 @@ $packets = $pdo
             padding: 25px 15px;
         }
 
-        .sidebar-logo {
-            text-align: center;
-            padding: 10px 0 30px;
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            padding-left: 12px;
         }
 
-        .sidebar-logo h2 {
-            font-size: 27px;
-        }
-
-        .sidebar-logo span {
+        .logo span {
             color: #3b82f6;
         }
 
-        .sidebar-menu {
-            list-style: none;
+        .menu-title {
+            font-size: 11px;
+            color: #9ca3af;
+            margin: 20px 12px 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .sidebar-menu li {
-            margin-bottom: 6px;
-        }
-
-        .sidebar-menu a {
+        .sidebar a {
             display: block;
-            padding: 13px 15px;
-            border-radius: 7px;
-            color: #d1d5db;
             text-decoration: none;
+            color: #d1d5db;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 5px;
             font-size: 14px;
         }
 
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
+        .sidebar a:hover,
+        .sidebar a.active {
             background: #2563eb;
             color: white;
         }
@@ -129,94 +145,164 @@ $packets = $pdo
             color: #fca5a5;
         }
 
-        /* =========================
-           MAIN CONTENT
-        ========================= */
+        /* MAIN */
 
-        .main-content {
+        .main {
             margin-left: 240px;
-            padding: 30px;
+            padding: 35px;
         }
 
-        .top-header {
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 30px;
         }
 
-        .top-header h1 {
+        .page-title h1 {
             font-size: 28px;
-            color: #111827;
+            margin-bottom: 6px;
         }
 
-        .top-header p {
-            margin-top: 6px;
+        .page-title p {
             color: #6b7280;
             font-size: 14px;
         }
 
-        /* =========================
-           STATISTICS
-        ========================= */
+        .user-info {
+            text-align: right;
+        }
 
-        .stats-grid {
+        .user-info strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .user-info span {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* CAPTURE BUTTON */
+
+        .capture-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .capture-info h2 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .capture-info p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .capture-button {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 160px;
+        }
+
+        .capture-button:hover {
+            background: #1d4ed8;
+        }
+
+        .capture-button:disabled {
+            background: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .capture-message {
+            margin-top: 12px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .capture-message.success {
+            display: block;
+            color: #15803d;
+        }
+
+        .capture-message.error {
+            display: block;
+            color: #b91c1c;
+        }
+
+        /* CARDS */
+
+        .cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
-        .stat-card {
+        .card {
             background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
         }
 
-        .stat-card h3 {
+        .card-title {
             color: #6b7280;
             font-size: 13px;
-            font-weight: normal;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .stat-number {
-            font-size: 30px;
+        .card-value {
+            font-size: 28px;
             font-weight: bold;
-            color: #111827;
         }
 
-        .tcp {
+        .blue {
             color: #2563eb;
         }
 
-        .udp {
+        .purple {
             color: #7c3aed;
         }
 
-        /* =========================
-           PACKET TABLE
-        ========================= */
+        /* TABLE */
 
-        .packets-card {
+        .table-panel {
             background: white;
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
         }
 
-        .packets-header {
+        .table-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .packets-header h2 {
-            font-size: 20px;
+        .table-header h2 {
+            font-size: 18px;
         }
 
-        .packets-header span {
+        .table-header span {
             color: #6b7280;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .table-container {
@@ -226,28 +312,23 @@ $packets = $pdo
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 950px;
+            min-width: 900px;
         }
 
         th {
             text-align: left;
-            padding: 13px;
+            padding: 12px;
             background: #f9fafb;
             color: #6b7280;
             font-size: 11px;
             text-transform: uppercase;
-            border-bottom: 1px solid #e5e7eb;
         }
 
         td {
-            padding: 14px 13px;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 13px 12px;
+            border-top: 1px solid #e5e7eb;
             font-size: 13px;
         }
-
-        /* =========================
-           PROTOCOL BADGES
-        ========================= */
 
         .protocol {
             display: inline-block;
@@ -257,29 +338,49 @@ $packets = $pdo
             font-weight: bold;
         }
 
-        .protocol-tcp {
+        .tcp {
             background: #dbeafe;
-            color: #1d4ed8;
+            color: #2563eb;
         }
 
-        .protocol-udp {
+        .udp {
             background: #ede9fe;
-            color: #6d28d9;
+            color: #7c3aed;
         }
 
-        .protocol-other {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
+        /* RESPONSIVE */
 
         @media (max-width: 900px) {
 
-            .stats-grid {
+            .cards {
                 grid-template-columns: 1fr;
+            }
+
+            .capture-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .user-info {
+                text-align: left;
             }
 
         }
@@ -290,163 +391,186 @@ $packets = $pdo
 
 <body>
 
-<!-- =========================
-     SIDEBAR
-========================= -->
+<!-- SIDEBAR -->
 
-<aside class="sidebar">
+<div class="sidebar">
 
-    <div class="sidebar-logo">
+    <div class="logo">
+        Trap<span>&</span>Trace
+    </div>
 
-        <h2>
-            Trap<span>&</span>Trace
-        </h2>
+    <div class="menu-title">
+        Main
+    </div>
+
+    <a href="/dashboard.php">
+        Dashboard
+    </a>
+
+    <a href="/Pages/monitoring.php">
+        Monitoring
+    </a>
+
+    <a href="/Pages/alerts.php">
+        Alerts
+    </a>
+
+    <a href="/Pages/packet_logs.php" class="active">
+        Packet Logs
+    </a>
+
+    <a href="/Pages/attackers.php">
+        Attackers
+    </a>
+
+    <a href="/Pages/logs.php">
+        Logs
+    </a>
+
+    <div class="menu-title">
+        Analysis
+    </div>
+
+    <a href="/Pages/analytics.php">
+        Analytics
+    </a>
+
+    <a href="/Pages/reports.php">
+        Reports
+    </a>
+
+    <div class="menu-title">
+        System
+    </div>
+
+    <a href="/Pages/settings.php">
+        Honeypot Configuration
+    </a>
+
+    <div class="logout">
+
+        <a href="/logout.php">
+            Logout
+        </a>
 
     </div>
 
-    <ul class="sidebar-menu">
+</div>
 
-        <li>
-            <a href="../dashboard.php">
-                Dashboard
-            </a>
-        </li>
+<!-- MAIN -->
 
-        <li>
-            <a href="monitoring.php">
-                Monitoring
-            </a>
-        </li>
+<div class="main">
 
-        <li>
-            <a href="alerts.php">
-                Alerts
-            </a>
-        </li>
+    <div class="topbar">
 
-        <li>
-            <a
-                href="packet_logs.php"
-                class="active"
-            >
-                Packet Logs
-            </a>
-        </li>
+        <div class="page-title">
 
-        <li>
-            <a href="attackers.php">
-                Attackers
-            </a>
-        </li>
+            <h1>
+                Packet Capture Logs
+            </h1>
 
-        <li>
-            <a href="logs.php">
-                Logs
-            </a>
-        </li>
+            <p>
+                Network packets captured by the honeypot
+            </p>
 
-        <li>
-            <a href="analytics.php">
-                Analytics
-            </a>
-        </li>
+        </div>
 
-        <li>
-            <a href="reports.php">
-                Reports
-            </a>
-        </li>
+        <div class="user-info">
 
-        <li>
-            <a href="settings.php">
-                Honeypot Configuration
-            </a>
-        </li>
+            <strong>
+                <?= htmlspecialchars($_SESSION["full_name"]) ?>
+            </strong>
 
-        <li class="logout">
-            <a href="../logout.php">
-                Logout
-            </a>
-        </li>
+            <span>
+                <?= htmlspecialchars($_SESSION["role"]) ?>
+            </span>
 
-    </ul>
+        </div>
 
-</aside>
+    </div>
 
 
-<!-- =========================
-     MAIN CONTENT
-========================= -->
+    <!-- CAPTURE SECTION -->
 
-<main class="main-content">
+    <div class="capture-section">
 
-    <header class="top-header">
+        <div class="capture-info">
 
-        <h1>
-            Packet Capture Logs
-        </h1>
+            <h2>
+                Network Packet Capture
+            </h2>
 
-        <p>
-            Network packets captured by the honeypot
-        </p>
+            <p>
+                Capture packets using TShark and automatically analyze
+                the traffic for possible port scanning activity.
+            </p>
 
-    </header>
+            <div
+                id="captureMessage"
+                class="capture-message"
+            ></div>
+
+        </div>
+
+        <button
+            type="button"
+            class="capture-button"
+            id="captureButton"
+        >
+            Capture Packets
+        </button>
+
+    </div>
 
 
-    <!-- =========================
-         STATISTICS
-    ========================== -->
+    <!-- STATISTICS -->
 
-    <section class="stats-grid">
+    <div class="cards">
 
-        <div class="stat-card">
+        <div class="card">
 
-            <h3>
+            <div class="card-title">
                 Total Packets
-            </h3>
+            </div>
 
-            <div class="stat-number">
+            <div class="card-value">
                 <?= $totalPackets ?>
             </div>
 
         </div>
 
+        <div class="card">
 
-        <div class="stat-card">
-
-            <h3>
+            <div class="card-title">
                 TCP Packets
-            </h3>
+            </div>
 
-            <div class="stat-number tcp">
+            <div class="card-value blue">
                 <?= $tcpPackets ?>
             </div>
 
         </div>
 
+        <div class="card">
 
-        <div class="stat-card">
-
-            <h3>
+            <div class="card-title">
                 UDP Packets
-            </h3>
+            </div>
 
-            <div class="stat-number udp">
+            <div class="card-value purple">
                 <?= $udpPackets ?>
             </div>
 
         </div>
 
-    </section>
+    </div>
 
 
-    <!-- =========================
-         PACKET TABLE
-    ========================== -->
+    <!-- PACKET TABLE -->
 
-    <section class="packets-card">
+    <div class="table-panel">
 
-        <div class="packets-header">
+        <div class="table-header">
 
             <h2>
                 Captured Packets
@@ -457,7 +581,6 @@ $packets = $pdo
             </span>
 
         </div>
-
 
         <div class="table-container">
 
@@ -503,10 +626,19 @@ $packets = $pdo
 
                 </thead>
 
-
                 <tbody>
 
-                <?php if (count($packets) > 0): ?>
+                <?php if (empty($packets)): ?>
+
+                    <tr>
+
+                        <td colspan="8">
+                            No packets captured yet.
+                        </td>
+
+                    </tr>
+
+                <?php else: ?>
 
                     <?php foreach ($packets as $packet): ?>
 
@@ -528,58 +660,50 @@ $packets = $pdo
 
                                 <?php
 
-                                $protocolClass = "protocol-other";
+                                $protocol = strtoupper(
+                                    $packet["protocol"] ?? "Unknown"
+                                );
 
-                                if (strtoupper($packet["protocol"]) === "TCP") {
-                                    $protocolClass = "protocol-tcp";
-                                } elseif (strtoupper($packet["protocol"]) === "UDP") {
-                                    $protocolClass = "protocol-udp";
-                                }
+                                $protocolClass = strtolower($protocol);
 
                                 ?>
 
-                                <span class="protocol <?= $protocolClass ?>">
-
-                                    <?= htmlspecialchars($packet["protocol"]) ?>
-
+                                <span
+                                    class="protocol <?= htmlspecialchars($protocolClass) ?>"
+                                >
+                                    <?= htmlspecialchars($protocol) ?>
                                 </span>
 
                             </td>
 
                             <td>
-                                <?= htmlspecialchars($packet["source_port"] ?? "-") ?>
+                                <?= $packet["source_port"] !== null
+                                    ? htmlspecialchars($packet["source_port"])
+                                    : "-"
+                                ?>
                             </td>
 
                             <td>
-                                <?= htmlspecialchars($packet["destination_port"] ?? "-") ?>
+                                <?= $packet["destination_port"] !== null
+                                    ? htmlspecialchars($packet["destination_port"])
+                                    : "-"
+                                ?>
                             </td>
 
                             <td>
-                                <?= htmlspecialchars($packet["packet_size"] ?? "-") ?>
-                                bytes
+                                <?= $packet["packet_size"] !== null
+                                    ? htmlspecialchars($packet["packet_size"]) . " bytes"
+                                    : "-"
+                                ?>
                             </td>
 
                             <td>
-                                <?= htmlspecialchars($packet["packet_info"] ?? "-") ?>
+                                <?= htmlspecialchars($packet["packet_info"]) ?>
                             </td>
 
                         </tr>
 
                     <?php endforeach; ?>
-
-                <?php else: ?>
-
-                    <tr>
-
-                        <td
-                            colspan="8"
-                            style="text-align:center; padding:30px;"
-                        >
-                            No packet capture logs recorded.
-
-                        </td>
-
-                    </tr>
 
                 <?php endif; ?>
 
@@ -589,9 +713,96 @@ $packets = $pdo
 
         </div>
 
-    </section>
+    </div>
 
-</main>
+</div>
+
+
+<script>
+
+const captureButton = document.getElementById("captureButton");
+const captureMessage = document.getElementById("captureMessage");
+
+captureButton.addEventListener("click", function () {
+
+    captureButton.disabled = true;
+    captureButton.textContent = "Capturing...";
+
+    captureMessage.className = "capture-message";
+    captureMessage.textContent = "";
+
+    fetch("/API/capture_packets.php")
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.success) {
+
+                let message =
+                    "Capture completed. "
+                    + data.saved_packets
+                    + " packets saved.";
+
+                if (
+                    data.port_scan_detections !== undefined
+                    && data.port_scan_detections > 0
+                ) {
+
+                    message +=
+                        " "
+                        + data.port_scan_detections
+                        + " port scanning detection(s) generated.";
+
+                }
+
+                captureMessage.className =
+                    "capture-message success";
+
+                captureMessage.textContent = message;
+
+                setTimeout(function () {
+
+                    window.location.reload();
+
+                }, 1500);
+
+            } else {
+
+                captureMessage.className =
+                    "capture-message error";
+
+                captureMessage.textContent =
+                    data.message || "Packet capture failed.";
+
+            }
+
+        })
+
+        .catch(error => {
+
+            captureMessage.className =
+                "capture-message error";
+
+            captureMessage.textContent =
+                "Unable to connect to the packet capture service.";
+
+        })
+
+        .finally(() => {
+
+            setTimeout(function () {
+
+                captureButton.disabled = false;
+                captureButton.textContent = "Capture Packets";
+
+            }, 1500);
+
+        });
+
+});
+
+</script>
 
 </body>
 

@@ -96,7 +96,6 @@ $attackerStats = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -416,32 +415,32 @@ $attackerStats = $stmt->fetchAll();
     </div>
 
 
-    <a href="/TrapTrace/dashboard.php">
+    <a href="/dashboard.php">
         Dashboard
     </a>
 
 
-    <a href="/TrapTrace/Pages/monitoring.php">
+    <a href="/Pages/monitoring.php">
         Monitoring
     </a>
 
 
-    <a href="/TrapTrace/Pages/alerts.php">
+    <a href="/Pages/alerts.php">
         Alerts
     </a>
 
 
-    <a href="/TrapTrace/Pages/packet_logs.php">
+    <a href="/Pages/packet_logs.php">
         Packet Logs
     </a>
 
 
-    <a href="/TrapTrace/Pages/attackers.php">
+    <a href="/Pages/attackers.php">
         Attackers
     </a>
 
 
-    <a href="/TrapTrace/Pages/logs.php">
+    <a href="/Pages/logs.php">
         Logs
     </a>
 
@@ -451,12 +450,12 @@ $attackerStats = $stmt->fetchAll();
     </div>
 
 
-    <a href="/TrapTrace/Pages/analytics.php" class="active">
+    <a href="/Pages/analytics.php" class="active">
         Analytics
     </a>
 
 
-    <a href="/TrapTrace/Pages/reports.php">
+    <a href="/Pages/reports.php">
         Reports
     </a>
 
@@ -466,14 +465,14 @@ $attackerStats = $stmt->fetchAll();
     </div>
 
 
-    <a href="/TrapTrace/Pages/settings.php">
+    <a href="/Pages/settings.php">
         Honeypot Configuration
     </a>
 
 
     <div class="logout">
 
-        <a href="/TrapTrace/logout.php">
+        <a href="/logout.php">
             Logout
         </a>
 
@@ -492,6 +491,7 @@ $attackerStats = $stmt->fetchAll();
     <!-- TOP BAR -->
 
     <div class="topbar">
+
 
         <div class="page-title">
 

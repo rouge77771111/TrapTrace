@@ -3,17 +3,14 @@
 session_name("KVENTERPRISE_SESSION");
 session_start();
 
-if (!isset($_SESSION["kv_logged_in"])) {
+if (!isset($_SESSION["kv_logged_in"]) || $_SESSION["kv_logged_in"] !== true) {
     header("Location: index.php");
     exit;
 }
 
-$username = $_SESSION["kv_username"] ?? "User";
-
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -25,8 +22,7 @@ $username = $_SESSION["kv_username"] ?? "User";
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>KV Enterprise | Dashboard</title>
-
+    <title>Dashboard | KV Enterprise</title>
 
     <style>
 
@@ -37,16 +33,12 @@ $username = $_SESSION["kv_username"] ?? "User";
             font-family: Arial, Helvetica, sans-serif;
         }
 
-
         body {
-            background: #f4f6f9;
+            background: #f4f6f8;
             color: #1f2937;
         }
 
-
-        /* =========================
-           SIDEBAR
-        ========================= */
+        /* SIDEBAR */
 
         .sidebar {
             position: fixed;
@@ -54,98 +46,76 @@ $username = $_SESSION["kv_username"] ?? "User";
             top: 0;
             width: 230px;
             height: 100vh;
-            background: #1e293b;
+            background: #111827;
             color: white;
             padding: 25px 15px;
         }
 
-
         .logo {
-            font-size: 22px;
+            font-size: 23px;
             font-weight: bold;
             margin-bottom: 35px;
-            padding-left: 10px;
+            padding-left: 12px;
         }
-
 
         .logo span {
             color: #3b82f6;
         }
 
-
         .menu-title {
             font-size: 11px;
-            color: #94a3b8;
+            color: #9ca3af;
+            margin: 20px 12px 10px;
             text-transform: uppercase;
-            margin: 20px 10px 10px;
             letter-spacing: 1px;
         }
 
-
         .sidebar a {
             display: block;
-            color: #cbd5e1;
             text-decoration: none;
-            padding: 11px 10px;
-            border-radius: 6px;
+            color: #d1d5db;
+            padding: 12px;
+            border-radius: 7px;
             margin-bottom: 5px;
             font-size: 14px;
         }
 
-
         .sidebar a:hover,
         .sidebar a.active {
-            background: #334155;
+            background: #2563eb;
             color: white;
         }
 
+        .logout {
+            margin-top: 25px;
+        }
 
-        /* =========================
-           MAIN CONTENT
-        ========================= */
+        .logout a {
+            color: #fca5a5;
+        }
+
+        /* MAIN */
 
         .main {
             margin-left: 230px;
-            padding: 30px;
+            padding: 35px;
         }
 
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header {
             margin-bottom: 30px;
         }
 
-
-        .topbar h1 {
-            font-size: 26px;
-            margin-bottom: 5px;
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
         }
 
-
-        .topbar p {
-            color: #64748b;
-            font-size: 13px;
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
         }
 
-
-        .user {
-            text-align: right;
-            font-size: 13px;
-        }
-
-
-        .user span {
-            display: block;
-            color: #64748b;
-            margin-top: 4px;
-        }
-
-
-        /* =========================
-           SUMMARY CARDS
-        ========================= */
+        /* CARDS */
 
         .cards {
             display: grid;
@@ -154,114 +124,95 @@ $username = $_SESSION["kv_username"] ?? "User";
             margin-bottom: 25px;
         }
 
-
         .card {
             background: white;
             padding: 22px;
-            border-radius: 9px;
-            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
         }
 
-
         .card-title {
-            color: #64748b;
+            color: #6b7280;
             font-size: 13px;
             margin-bottom: 10px;
         }
 
-
         .card-value {
-            font-size: 27px;
+            font-size: 28px;
             font-weight: bold;
         }
 
+        /* CONTENT */
 
-        /* =========================
-           CONTENT GRID
-        ========================= */
-
-        .grid {
+        .content-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
         }
-
 
         .panel {
             background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 9px;
-            padding: 22px;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
         }
-
 
         .panel h2 {
             font-size: 18px;
             margin-bottom: 18px;
         }
 
-
-        /* =========================
-           INVENTORY ITEMS
-        ========================= */
-
-        .product {
+        .inventory-row {
             display: flex;
             justify-content: space-between;
-            padding: 13px 0;
+            padding: 14px 0;
             border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
         }
 
-
-        .product:last-child {
+        .inventory-row:last-child {
             border-bottom: none;
         }
 
-
-        .product-name {
-            font-size: 14px;
+        .stock {
             font-weight: bold;
         }
 
-
-        .product-stock {
+        .normal {
             color: #16a34a;
-            font-size: 13px;
         }
 
+        .low {
+            color: #d97706;
+        }
 
-        /* =========================
-           NOTICE
-        ========================= */
+        .out {
+            color: #dc2626;
+        }
 
         .notice {
-            margin-top: 25px;
             background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            padding: 16px;
-            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            border-radius: 6px;
+            color: #374151;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
+        /* RESPONSIVE */
 
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 900px) {
+        @media (max-width: 1000px) {
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .grid {
+            .content-grid {
                 grid-template-columns: 1fr;
             }
 
         }
-
 
         @media (max-width: 700px) {
 
@@ -278,119 +229,71 @@ $username = $_SESSION["kv_username"] ?? "User";
                 grid-template-columns: 1fr;
             }
 
-            .topbar {
-                align-items: flex-start;
-                gap: 15px;
-                flex-direction: column;
-            }
-
         }
 
     </style>
 
 </head>
 
-
 <body>
 
-
-<!-- =========================
-     SIDEBAR
-========================= -->
+<!-- SIDEBAR -->
 
 <div class="sidebar">
 
-
     <div class="logo">
-        KV <span>Enterprise</span>
+        KV<span>Enterprise</span>
     </div>
-
 
     <div class="menu-title">
         Main
     </div>
 
-
     <a href="dashboard.php" class="active">
         Dashboard
     </a>
-
 
     <a href="inventory.php">
         Inventory
     </a>
 
-
-    <a href="inventory.php">
-        Products
+    <a href="admin.php">
+        Administration
     </a>
-
-
-    <a href="inventory.php">
-        Stock Reports
-    </a>
-
 
     <div class="menu-title">
         Account
     </div>
 
+    <div class="logout">
 
-    <a href="index.php">
-        Logout
-    </a>
-
-
-</div>
-
-
-<!-- =========================
-     MAIN CONTENT
-========================= -->
-
-<div class="main">
-
-
-    <!-- TOP BAR -->
-
-    <div class="topbar">
-
-
-        <div>
-
-            <h1>
-                Inventory Dashboard
-            </h1>
-
-            <p>
-                KV Enterprise Cat Food Inventory Management
-            </p>
-
-        </div>
-
-
-        <div class="user">
-
-            <strong>
-                <?= htmlspecialchars($username) ?>
-            </strong>
-
-            <span>
-                Administrator
-            </span>
-
-        </div>
-
+        <a href="logout.php">
+            Logout
+        </a>
 
     </div>
 
+</div>
 
-    <!-- =========================
-         SUMMARY CARDS
-    ========================= -->
+<!-- MAIN CONTENT -->
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>
+            Dashboard
+        </h1>
+
+        <p>
+            KV Enterprise Inventory Management
+        </p>
+
+    </div>
+
+    <!-- SUMMARY CARDS -->
 
     <div class="cards">
-
 
         <div class="card">
 
@@ -404,7 +307,6 @@ $username = $_SESSION["kv_username"] ?? "User";
 
         </div>
 
-
         <div class="card">
 
             <div class="card-title">
@@ -416,7 +318,6 @@ $username = $_SESSION["kv_username"] ?? "User";
             </div>
 
         </div>
-
 
         <div class="card">
 
@@ -430,7 +331,6 @@ $username = $_SESSION["kv_username"] ?? "User";
 
         </div>
 
-
         <div class="card">
 
             <div class="card-title">
@@ -443,165 +343,105 @@ $username = $_SESSION["kv_username"] ?? "User";
 
         </div>
 
-
     </div>
 
+    <!-- CONTENT -->
 
-    <!-- =========================
-         CONTENT
-    ========================= -->
-
-    <div class="grid">
-
-
-        <!-- INVENTORY -->
+    <div class="content-grid">
 
         <div class="panel">
 
-
             <h2>
-                Cat Food Inventory
+                Recent Inventory
             </h2>
 
+            <div class="inventory-row">
 
-            <div class="product">
-
-                <div class="product-name">
+                <span>
                     Premium Persian Cat Food
-                </div>
+                </span>
 
-                <div class="product-stock">
-                    120 units
-                </div>
+                <span class="stock normal">
+                    24 units
+                </span>
 
             </div>
 
+            <div class="inventory-row">
 
-            <div class="product">
-
-                <div class="product-name">
+                <span>
                     Indoor Adult Cat Food
-                </div>
+                </span>
 
-                <div class="product-stock">
-                    85 units
-                </div>
+                <span class="stock normal">
+                    19 units
+                </span>
 
             </div>
 
+            <div class="inventory-row">
 
-            <div class="product">
-
-                <div class="product-name">
+                <span>
                     Kitten Growth Formula
-                </div>
+                </span>
 
-                <div class="product-stock">
-                    64 units
-                </div>
+                <span class="stock normal">
+                    15 units
+                </span>
 
             </div>
 
+            <div class="inventory-row">
 
-            <div class="product">
-
-                <div class="product-name">
+                <span>
                     Sensitive Stomach Formula
-                </div>
+                </span>
 
-                <div class="product-stock">
-                    31 units
-                </div>
+                <span class="stock low">
+                    5 units
+                </span>
 
             </div>
 
+            <div class="inventory-row">
+
+                <span>
+                    Chicken Adult Formula
+                </span>
+
+                <span class="stock out">
+                    0 units
+                </span>
+
+            </div>
 
         </div>
-
-
-        <!-- RECENT ACTIVITY -->
 
         <div class="panel">
 
-
             <h2>
-                Recent Inventory Activity
+                System Notice
             </h2>
 
+            <div class="notice">
 
-            <div class="product">
+                KV Enterprise is a local demonstration
+                application used as the web honeypot for
+                Trap&Trace.
 
-                <div class="product-name">
-                    Stock received
-                </div>
+                <br><br>
 
-                <div>
-                    Today
-                </div>
-
-            </div>
-
-
-            <div class="product">
-
-                <div class="product-name">
-                    Product updated
-                </div>
-
-                <div>
-                    Today
-                </div>
+                Suspicious access attempts and login
+                activities may be recorded and analyzed
+                by the Trap&Trace monitoring system.
 
             </div>
-
-
-            <div class="product">
-
-                <div class="product-name">
-                    Stock adjustment
-                </div>
-
-                <div>
-                    Yesterday
-                </div>
-
-            </div>
-
-
-            <div class="product">
-
-                <div class="product-name">
-                    New product added
-                </div>
-
-                <div>
-                    Yesterday
-                </div>
-
-            </div>
-
 
         </div>
 
-
     </div>
-
-
-    <!-- INFORMATION -->
-
-    <div class="notice">
-
-        <strong>KV Enterprise ERP System</strong><br>
-
-        This is a controlled local honeypot environment.
-        Suspicious authentication attempts are monitored and
-        recorded by the Trap&Trace security monitoring system.
-
-    </div>
-
 
 </div>
-
 
 </body>
 
