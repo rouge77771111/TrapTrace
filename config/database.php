@@ -1,13 +1,14 @@
 <?php
 
-$host = "localhost";
-$dbname = "traptrace";
-$username = "root";
-$password = "";
+$host = getenv("MYSQLHOST") ?: "localhost";
+$port = getenv("MYSQLPORT") ?: "3306";
+$dbname = getenv("MYSQLDATABASE") ?: "traptrace";
+$username = getenv("MYSQLUSER") ?: "root";
+$password = getenv("MYSQLPASSWORD") ?: "";
 
 try {
     $pdo = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+        "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
         $username,
         $password
     );
