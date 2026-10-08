@@ -15,7 +15,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $validUsername = "admin";
     $validPassword = "kvadmin123";
 
-    $ipAddress = $_SERVER["REMOTE_ADDR"] ?? "Unknown";
+  $ipAddress = $_SERVER["REMOTE_ADDR"] ?? "Unknown";
+
+$forwardedFor = $_SERVER["HTTP_X_FORWARDED_FOR"] ?? "";
+
+if ($forwardedFor !== "") {
+    $forwardedIps = explode(",", $forwardedFor);
+    $candidateIp = trim($forwardedIps[0]);
+
+    if (filter_var($candidateIp, FILTER_VALIDATE_IP)) {
+        $ipAddress = $candidateIp;
+    }
+}
 
     error_log("KV login IP check: " . json_encode([
     "REMOTE_ADDR" => $_SERVER["REMOTE_ADDR"] ?? null,
