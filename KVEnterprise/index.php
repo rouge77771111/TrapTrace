@@ -111,30 +111,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         |--------------------------------------------------------------------------
         */
 
-        if ($totalAttempts === 1) {
+   if ($totalAttempts === 1) {
+    $attackType = "Credential Attack";
+    $riskLevel = "Low";
+    $activity = "First failed login attempt detected on KV Enterprise.";
 
-            $attackType = "Credential Attack";
-            $riskLevel = "Medium";
+} elseif ($totalAttempts <= 3) {
+    $attackType = "Repeated Login Attempt";
+    $riskLevel = "Medium";
+    $activity = "Repeated failed login attempts detected from the same IP address.";
 
-            $activity =
-                "Failed login attempt detected on KV Enterprise.";
+} elseif ($totalAttempts === 4) {
+    $attackType = "Repeated Login Attempt";
+    $riskLevel = "High";
+    $activity = "Four failed login attempts detected from the same IP address within 10 minutes.";
 
-        } elseif ($totalAttempts < 5) {
-
-            $attackType = "Repeated Login Attempt";
-            $riskLevel = "High";
-
-            $activity =
-                "Repeated failed login attempts detected from the same IP address.";
-
-        } else {
-
-            $attackType = "Brute Force Attack";
-            $riskLevel = "Critical";
-
-            $activity =
-                "Five or more failed login attempts detected from the same IP address within 10 minutes, indicating possible brute-force behavior.";
-        }
+} else {
+    $attackType = "Brute Force Attack";
+    $riskLevel = "Critical";
+    $activity = "Five or more failed login attempts detected from the same IP address within 10 minutes, indicating possible brute-force behavior.";
+}
 
         /*
         |--------------------------------------------------------------------------
