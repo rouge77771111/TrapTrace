@@ -276,10 +276,6 @@ $products = [
         Administration
     </a>
 
-    <div class="menu-title">
-        Account
-    </div>
-
     <div class="logout">
 
         <a href="logout.php">

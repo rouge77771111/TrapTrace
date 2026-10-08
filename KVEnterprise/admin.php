@@ -107,6 +107,13 @@ if (!isset($_SESSION["kv_logged_in"]) || $_SESSION["kv_logged_in"] !== true) {
         .logo span {
             color: #3b82f6;
         }
+        .menu-title {
+    font-size: 11px;
+    color: #9ca3af;
+    margin: 20px 12px 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
         .sidebar a {
             display: block;
@@ -217,10 +224,6 @@ if (!isset($_SESSION["kv_logged_in"]) || $_SESSION["kv_logged_in"] !== true) {
     <a href="admin.php" class="active">
         Administration
     </a>
-
-    <div class="menu-title">
-        Account
-    </div>
 
     <div class="logout">
 

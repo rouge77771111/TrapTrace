@@ -261,10 +261,6 @@ if (!isset($_SESSION["kv_logged_in"]) || $_SESSION["kv_logged_in"] !== true) {
         Administration
     </a>
 
-    <div class="menu-title">
-        Account
-    </div>
-
     <div class="logout">
 
         <a href="logout.php">

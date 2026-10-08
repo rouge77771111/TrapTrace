@@ -126,61 +126,59 @@ $attackerStats = $stmt->fetchAll();
         ========================= */
 
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background: #111827;
-            color: white;
-            padding: 25px 15px;
-        }
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #111827;
+    color: white;
+    padding: 25px 15px;
+}
 
-        .logo {
-            font-size: 23px;
-            font-weight: bold;
-            margin-bottom: 35px;
-            padding-left: 12px;
-        }
+.sidebar-logo {
+    text-align: center;
+    padding: 10px 0 30px;
+}
 
-        .logo span {
-            color: #ef4444;
-        }
+.sidebar-logo h2 {
+    font-size: 27px;
+}
 
-        .menu-title {
-            font-size: 11px;
-            color: #9ca3af;
-            margin: 20px 12px 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+.sidebar-logo span {
+    color: #3b82f6;
+}
 
-        .sidebar a {
-            display: block;
-            text-decoration: none;
-            color: #d1d5db;
-            padding: 12px;
-            border-radius: 7px;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
+.sidebar-menu {
+    list-style: none;
+}
 
-        .sidebar a:hover {
-            background: #1f2937;
-            color: white;
-        }
+.sidebar-menu li {
+    margin-bottom: 6px;
+}
 
-        .sidebar a.active {
-            background: #dc2626;
-            color: white;
-        }
+.sidebar-menu a {
+    display: block;
+    padding: 13px 15px;
+    border-radius: 7px;
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 14px;
+}
 
-        .logout {
-            margin-top: 25px;
-            border-top: 1px solid #374151;
-            padding-top: 15px;
-        }
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background: #2563eb;
+    color: white;
+}
 
+.logout {
+    margin-top: 25px;
+}
+
+.logout a {
+    color: #fca5a5;
+}
 
         /* =========================
            MAIN CONTENT
@@ -403,83 +401,57 @@ $attackerStats = $stmt->fetchAll();
      SIDEBAR
 ========================= -->
 
-<div class="sidebar">
+<aside class="sidebar">
 
-    <div class="logo">
-        Trap<span>&</span>Trace
+    <div class="sidebar-logo">
+        <h2>Trap<span>&</span>Trace</h2>
     </div>
 
+    <ul class="sidebar-menu">
 
-    <div class="menu-title">
-        Main
-    </div>
+        <li>
+            <a href="/dashboard.php">Dashboard</a>
+        </li>
 
+        <li>
+            <a href="monitoring.php">Monitoring</a>
+        </li>
 
-    <a href="/dashboard.php">
-        Dashboard
-    </a>
+        <li>
+            <a href="alerts.php">Alerts</a>
+        </li>
 
+        <li>
+            <a href="packet_logs.php">Packet Logs</a>
+        </li>
 
-    <a href="/Pages/monitoring.php">
-        Monitoring
-    </a>
+        <li>
+            <a href="attackers.php">Attackers</a>
+        </li>
 
+        <li>
+            <a href="logs.php">Logs</a>
+        </li>
 
-    <a href="/Pages/alerts.php">
-        Alerts
-    </a>
+        <li>
+            <a href="analytics.php" class="active">Analytics</a>
+        </li>
 
+        <li>
+            <a href="reports.php">Reports</a>
+        </li>
 
-    <a href="/Pages/packet_logs.php">
-        Packet Logs
-    </a>
+        <li>
+            <a href="settings.php">Honeypot Configuration</a>
+        </li>
 
+        <li class="logout">
+            <a href="../logout.php">Logout</a>
+        </li>
 
-    <a href="/Pages/attackers.php">
-        Attackers
-    </a>
+    </ul>
 
-
-    <a href="/Pages/logs.php">
-        Logs
-    </a>
-
-
-    <div class="menu-title">
-        Analysis
-    </div>
-
-
-    <a href="/Pages/analytics.php" class="active">
-        Analytics
-    </a>
-
-
-    <a href="/Pages/reports.php">
-        Reports
-    </a>
-
-
-    <div class="menu-title">
-        System
-    </div>
-
-
-    <a href="/Pages/settings.php">
-        Honeypot Configuration
-    </a>
-
-
-    <div class="logout">
-
-        <a href="/logout.php">
-            Logout
-        </a>
-
-    </div>
-
-</div>
-
+</aside>
 
 <!-- =========================
      MAIN CONTENT

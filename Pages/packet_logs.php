@@ -3,61 +3,52 @@
 require_once "../auth.php";
 require_once "../config/database.php";
 
-/*
-|--------------------------------------------------------------------------
-| PACKET STATISTICS
-|--------------------------------------------------------------------------
-*/
+/* =========================
+   PACKET STATISTICS
+========================= */
 
-$stmt = $pdo->query("
-    SELECT COUNT(*)
-    FROM packet_capture_logs
-");
+$totalPackets = $pdo
+    ->query("SELECT COUNT(*) FROM packet_capture_logs")
+    ->fetchColumn();
 
-$totalPackets = (int) $stmt->fetchColumn();
+$tcpPackets = $pdo
+    ->query("
+        SELECT COUNT(*)
+        FROM packet_capture_logs
+        WHERE protocol = 'TCP'
+    ")
+    ->fetchColumn();
 
-
-$stmt = $pdo->query("
-    SELECT COUNT(*)
-    FROM packet_capture_logs
-    WHERE protocol = 'TCP'
-");
-
-$tcpPackets = (int) $stmt->fetchColumn();
-
-
-$stmt = $pdo->query("
-    SELECT COUNT(*)
-    FROM packet_capture_logs
-    WHERE protocol = 'UDP'
-");
-
-$udpPackets = (int) $stmt->fetchColumn();
+$udpPackets = $pdo
+    ->query("
+        SELECT COUNT(*)
+        FROM packet_capture_logs
+        WHERE protocol = 'UDP'
+    ")
+    ->fetchColumn();
 
 
-/*
-|--------------------------------------------------------------------------
-| RECENT PACKETS
-|--------------------------------------------------------------------------
-*/
+/* =========================
+   RECENT PACKETS
+========================= */
 
-$stmt = $pdo->query("
-    SELECT
-        id,
-        source_ip,
-        destination_ip,
-        protocol,
-        source_port,
-        destination_port,
-        packet_size,
-        packet_info,
-        captured_at
-    FROM packet_capture_logs
-    ORDER BY captured_at DESC
-    LIMIT 100
-");
-
-$packets = $stmt->fetchAll();
+$packets = $pdo
+    ->query("
+        SELECT
+            id,
+            source_ip,
+            destination_ip,
+            protocol,
+            source_port,
+            destination_port,
+            packet_size,
+            packet_info,
+            captured_at
+        FROM packet_capture_logs
+        ORDER BY captured_at DESC
+        LIMIT 100
+    ")
+    ->fetchAll();
 
 ?>
 
@@ -78,61 +69,73 @@ $packets = $stmt->fetchAll();
     <style>
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, Helvetica, sans-serif;
+            box-sizing: border-box;
         }
 
         body {
-            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f9;
             color: #1f2937;
         }
 
-        /* SIDEBAR */
+
+        /* =========================
+           SIDEBAR
+        ========================= */
 
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
+
             width: 240px;
             height: 100vh;
+
             background: #111827;
             color: white;
+
             padding: 25px 15px;
         }
 
-        .logo {
-            font-size: 23px;
-            font-weight: bold;
-            margin-bottom: 35px;
-            padding-left: 12px;
+        .sidebar-logo {
+            text-align: center;
+            padding: 10px 0 30px;
         }
 
-        .logo span {
+        .sidebar-logo h2 {
+            font-size: 27px;
+        }
+
+        .sidebar-logo span {
             color: #3b82f6;
         }
 
-        .menu-title {
-            font-size: 11px;
-            color: #9ca3af;
-            margin: 20px 12px 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .sidebar-menu {
+            list-style: none;
         }
 
-        .sidebar a {
+        .sidebar-menu li {
+            margin-bottom: 6px;
+        }
+
+        .sidebar-menu a {
             display: block;
-            text-decoration: none;
-            color: #d1d5db;
-            padding: 12px;
+
+            padding: 13px 15px;
+
             border-radius: 7px;
-            margin-bottom: 5px;
+
+            color: #d1d5db;
+
+            text-decoration: none;
+
             font-size: 14px;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
             background: #2563eb;
             color: white;
         }
@@ -145,61 +148,79 @@ $packets = $stmt->fetchAll();
             color: #fca5a5;
         }
 
-        /* MAIN */
 
-        .main {
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
             margin-left: 240px;
-            padding: 35px;
+            padding: 30px;
         }
 
-        .topbar {
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .top-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
+
             margin-bottom: 30px;
         }
 
-        .page-title h1 {
+        .top-header h1 {
             font-size: 28px;
-            margin-bottom: 6px;
+            color: #111827;
         }
 
-        .page-title p {
+        .top-header p {
+            margin-top: 6px;
             color: #6b7280;
             font-size: 14px;
         }
 
         .user-info {
-            text-align: right;
-        }
+            background: white;
 
-        .user-info strong {
-            display: block;
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
             font-size: 14px;
         }
 
-        .user-info span {
-            color: #6b7280;
-            font-size: 12px;
-        }
 
-        /* CAPTURE BUTTON */
+        /* =========================
+           CAPTURE SECTION
+        ========================= */
 
         .capture-section {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
             margin-bottom: 25px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             gap: 20px;
         }
 
         .capture-info h2 {
-            font-size: 18px;
+            font-size: 20px;
+            color: #111827;
+
             margin-bottom: 6px;
         }
 
@@ -210,14 +231,18 @@ $packets = $stmt->fetchAll();
 
         .capture-button {
             border: none;
+
+            padding: 12px 20px;
+
             background: #2563eb;
             color: white;
-            padding: 12px 20px;
+
             border-radius: 7px;
+
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 600;
+
             cursor: pointer;
-            min-width: 160px;
         }
 
         .capture-button:hover {
@@ -230,46 +255,56 @@ $packets = $stmt->fetchAll();
         }
 
         .capture-message {
-            margin-top: 12px;
+            margin-top: 10px;
             font-size: 13px;
-            display: none;
         }
 
         .capture-message.success {
-            display: block;
             color: #15803d;
         }
 
         .capture-message.error {
-            display: block;
             color: #b91c1c;
         }
 
-        /* CARDS */
+
+        /* =========================
+           STAT CARDS
+        ========================= */
 
         .cards {
             display: grid;
+
             grid-template-columns: repeat(3, 1fr);
+
             gap: 20px;
-            margin-bottom: 25px;
+
+            margin-bottom: 30px;
         }
 
         .card {
             background: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+            border-radius: 12px;
+
+            padding: 24px;
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .card-title {
             color: #6b7280;
+
             font-size: 13px;
-            margin-bottom: 10px;
+
+            margin-bottom: 12px;
         }
 
         .card-value {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: bold;
+
+            color: #111827;
         }
 
         .blue {
@@ -280,29 +315,37 @@ $packets = $stmt->fetchAll();
             color: #7c3aed;
         }
 
-        /* TABLE */
+
+        /* =========================
+           TABLE
+        ========================= */
 
         .table-panel {
             background: white;
-            border-radius: 10px;
+
+            border-radius: 12px;
+
             padding: 25px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .table-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             margin-bottom: 20px;
         }
 
         .table-header h2 {
-            font-size: 18px;
+            font-size: 20px;
+            color: #111827;
         }
 
         .table-header span {
             color: #6b7280;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .table-container {
@@ -312,29 +355,50 @@ $packets = $stmt->fetchAll();
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 900px;
         }
 
         th {
             text-align: left;
-            padding: 12px;
+
+            padding: 13px;
+
             background: #f9fafb;
+
             color: #6b7280;
+
             font-size: 11px;
+
             text-transform: uppercase;
+
+            border-bottom: 1px solid #e5e7eb;
         }
 
         td {
-            padding: 13px 12px;
-            border-top: 1px solid #e5e7eb;
+            padding: 14px 13px;
+
+            border-bottom: 1px solid #e5e7eb;
+
             font-size: 13px;
         }
 
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /* =========================
+           PROTOCOL
+        ========================= */
+
         .protocol {
             display: inline-block;
+
             padding: 5px 9px;
+
             border-radius: 20px;
+
             font-size: 11px;
+
             font-weight: bold;
         }
 
@@ -348,17 +412,15 @@ $packets = $stmt->fetchAll();
             color: #7c3aed;
         }
 
-        /* RESPONSIVE */
 
-        @media (max-width: 900px) {
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
 
             .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .capture-section {
-                flex-direction: column;
-                align-items: flex-start;
+                grid-template-columns: repeat(2, 1fr);
             }
 
         }
@@ -369,18 +431,24 @@ $packets = $stmt->fetchAll();
                 width: 200px;
             }
 
-            .main {
+            .main-content {
                 margin-left: 200px;
                 padding: 20px;
             }
 
-            .topbar {
-                flex-direction: column;
-                gap: 15px;
+            .cards {
+                grid-template-columns: 1fr;
             }
 
-            .user-info {
-                text-align: left;
+            .capture-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
             }
 
         }
@@ -391,418 +459,500 @@ $packets = $stmt->fetchAll();
 
 <body>
 
-<!-- SIDEBAR -->
 
-<div class="sidebar">
+<div class="dashboard-layout">
 
-    <div class="logo">
-        Trap<span>&</span>Trace
-    </div>
 
-    <div class="menu-title">
-        Main
-    </div>
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
 
-    <a href="/dashboard.php">
-        Dashboard
-    </a>
+    <aside class="sidebar">
 
-    <a href="/Pages/monitoring.php">
-        Monitoring
-    </a>
+        <div class="sidebar-logo">
 
-    <a href="/Pages/alerts.php">
-        Alerts
-    </a>
-
-    <a href="/Pages/packet_logs.php" class="active">
-        Packet Logs
-    </a>
-
-    <a href="/Pages/attackers.php">
-        Attackers
-    </a>
-
-    <a href="/Pages/logs.php">
-        Logs
-    </a>
-
-    <div class="menu-title">
-        Analysis
-    </div>
-
-    <a href="/Pages/analytics.php">
-        Analytics
-    </a>
-
-    <a href="/Pages/reports.php">
-        Reports
-    </a>
-
-    <div class="menu-title">
-        System
-    </div>
-
-    <a href="/Pages/settings.php">
-        Honeypot Configuration
-    </a>
-
-    <div class="logout">
-
-        <a href="/logout.php">
-            Logout
-        </a>
-
-    </div>
-
-</div>
-
-<!-- MAIN -->
-
-<div class="main">
-
-    <div class="topbar">
-
-        <div class="page-title">
-
-            <h1>
-                Packet Capture Logs
-            </h1>
-
-            <p>
-                Network packets captured by the honeypot
-            </p>
+            <h2>
+                Trap<span>&</span>Trace
+            </h2>
 
         </div>
 
-        <div class="user-info">
 
-            <strong>
-                <?= htmlspecialchars($_SESSION["full_name"]) ?>
-            </strong>
+        <ul class="sidebar-menu">
 
-            <span>
+            <li>
+                <a href="../dashboard.php">
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="monitoring.php">
+                    Monitoring
+                </a>
+            </li>
+
+            <li>
+                <a href="alerts.php">
+                    Alerts
+                </a>
+            </li>
+
+            <li>
+                <a
+                    href="packet_logs.php"
+                    class="active"
+                >
+                    Packet Logs
+                </a>
+            </li>
+
+            <li>
+                <a href="attackers.php">
+                    Attackers
+                </a>
+            </li>
+
+            <li>
+                <a href="logs.php">
+                    Logs
+                </a>
+            </li>
+
+            <li>
+                <a href="analytics.php">
+                    Analytics
+                </a>
+            </li>
+
+            <li>
+                <a href="reports.php">
+                    Reports
+                </a>
+            </li>
+
+            <li>
+                <a href="settings.php">
+                    Honeypot Configuration
+                </a>
+            </li>
+
+            <li class="logout">
+                <a href="../logout.php">
+                    Logout
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    Packet Capture Logs
+                </h1>
+
+                <p>
+                    Network packets captured by the honeypot
+                </p>
+
+            </div>
+
+
+            <div class="user-info">
+
                 <?= htmlspecialchars($_SESSION["role"]) ?>
-            </span>
 
-        </div>
-
-    </div>
-
-
-    <!-- CAPTURE SECTION -->
-
-    <div class="capture-section">
-
-        <div class="capture-info">
-
-            <h2>
-                Network Packet Capture
-            </h2>
-
-            <p>
-                Capture packets using TShark and automatically analyze
-                the traffic for possible port scanning activity.
-            </p>
-
-            <div
-                id="captureMessage"
-                class="capture-message"
-            ></div>
-
-        </div>
-
-        <button
-            type="button"
-            class="capture-button"
-            id="captureButton"
-        >
-            Capture Packets
-        </button>
-
-    </div>
-
-
-    <!-- STATISTICS -->
-
-    <div class="cards">
-
-        <div class="card">
-
-            <div class="card-title">
-                Total Packets
             </div>
 
-            <div class="card-value">
-                <?= $totalPackets ?>
+        </header>
+
+
+        <!-- CAPTURE -->
+
+        <section class="capture-section">
+
+            <div class="capture-info">
+
+                <h2>
+                    Network Packet Capture
+                </h2>
+
+                <p>
+                    Capture packets using TShark and automatically analyze
+                    the traffic for possible port scanning activity.
+                </p>
+
+                <div
+                    id="captureMessage"
+                    class="capture-message"
+                ></div>
+
             </div>
 
-        </div>
 
-        <div class="card">
+            <button
+                type="button"
+                class="capture-button"
+                id="captureButton"
+            >
+                Capture Packets
+            </button>
 
-            <div class="card-title">
-                TCP Packets
+        </section>
+
+
+        <!-- STATISTICS -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <div class="card-title">
+                    Total Packets
+                </div>
+
+                <div class="card-value">
+                    <?= $totalPackets ?>
+                </div>
+
             </div>
 
-            <div class="card-value blue">
-                <?= $tcpPackets ?>
+
+            <div class="card">
+
+                <div class="card-title">
+                    TCP Packets
+                </div>
+
+                <div class="card-value blue">
+                    <?= $tcpPackets ?>
+                </div>
+
             </div>
 
-        </div>
 
-        <div class="card">
+            <div class="card">
 
-            <div class="card-title">
-                UDP Packets
+                <div class="card-title">
+                    UDP Packets
+                </div>
+
+                <div class="card-value purple">
+                    <?= $udpPackets ?>
+                </div>
+
             </div>
 
-            <div class="card-value purple">
-                <?= $udpPackets ?>
+        </section>
+
+
+        <!-- PACKET TABLE -->
+
+        <section class="table-panel">
+
+            <div class="table-header">
+
+                <h2>
+                    Captured Packets
+                </h2>
+
+                <span>
+                    Latest 100 packets
+                </span>
+
             </div>
 
-        </div>
 
-    </div>
+            <div class="table-container">
 
+                <table>
 
-    <!-- PACKET TABLE -->
-
-    <div class="table-panel">
-
-        <div class="table-header">
-
-            <h2>
-                Captured Packets
-            </h2>
-
-            <span>
-                Latest 100 packets
-            </span>
-
-        </div>
-
-        <div class="table-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Time
-                        </th>
-
-                        <th>
-                            Source IP
-                        </th>
-
-                        <th>
-                            Destination IP
-                        </th>
-
-                        <th>
-                            Protocol
-                        </th>
-
-                        <th>
-                            Source Port
-                        </th>
-
-                        <th>
-                            Destination Port
-                        </th>
-
-                        <th>
-                            Packet Size
-                        </th>
-
-                        <th>
-                            Information
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                <?php if (empty($packets)): ?>
-
-                    <tr>
-
-                        <td colspan="8">
-                            No packets captured yet.
-                        </td>
-
-                    </tr>
-
-                <?php else: ?>
-
-                    <?php foreach ($packets as $packet): ?>
+                    <thead>
 
                         <tr>
 
-                            <td>
-                                <?= htmlspecialchars($packet["captured_at"]) ?>
-                            </td>
+                            <th>
+                                Time
+                            </th>
 
-                            <td>
-                                <?= htmlspecialchars($packet["source_ip"]) ?>
-                            </td>
+                            <th>
+                                Source IP
+                            </th>
 
-                            <td>
-                                <?= htmlspecialchars($packet["destination_ip"]) ?>
-                            </td>
+                            <th>
+                                Destination IP
+                            </th>
 
-                            <td>
+                            <th>
+                                Protocol
+                            </th>
 
-                                <?php
+                            <th>
+                                Source Port
+                            </th>
 
-                                $protocol = strtoupper(
-                                    $packet["protocol"] ?? "Unknown"
-                                );
+                            <th>
+                                Destination Port
+                            </th>
 
-                                $protocolClass = strtolower($protocol);
+                            <th>
+                                Packet Size
+                            </th>
 
-                                ?>
+                            <th>
+                                Information
+                            </th>
 
-                                <span
-                                    class="protocol <?= htmlspecialchars($protocolClass) ?>"
-                                >
-                                    <?= htmlspecialchars($protocol) ?>
-                                </span>
+                        </tr>
 
-                            </td>
+                    </thead>
 
-                            <td>
-                                <?= $packet["source_port"] !== null
-                                    ? htmlspecialchars($packet["source_port"])
-                                    : "-"
-                                ?>
-                            </td>
 
-                            <td>
-                                <?= $packet["destination_port"] !== null
-                                    ? htmlspecialchars($packet["destination_port"])
-                                    : "-"
-                                ?>
-                            </td>
+                    <tbody>
 
-                            <td>
-                                <?= $packet["packet_size"] !== null
-                                    ? htmlspecialchars($packet["packet_size"]) . " bytes"
-                                    : "-"
-                                ?>
-                            </td>
+                    <?php if (empty($packets)): ?>
 
-                            <td>
-                                <?= htmlspecialchars($packet["packet_info"]) ?>
+                        <tr>
+
+                            <td colspan="8">
+                                No packets captured yet.
                             </td>
 
                         </tr>
 
-                    <?php endforeach; ?>
+                    <?php else: ?>
 
-                <?php endif; ?>
+                        <?php foreach ($packets as $packet): ?>
 
-                </tbody>
+                            <tr>
 
-            </table>
+                                <td>
+                                    <?= htmlspecialchars(
+                                        $packet["captured_at"]
+                                    ) ?>
+                                </td>
 
-        </div>
+                                <td>
+                                    <?= htmlspecialchars(
+                                        $packet["source_ip"]
+                                    ) ?>
+                                </td>
 
-    </div>
+                                <td>
+                                    <?= htmlspecialchars(
+                                        $packet["destination_ip"]
+                                    ) ?>
+                                </td>
+
+                                <td>
+
+                                    <?php
+
+                                    $protocol = strtoupper(
+                                        $packet["protocol"] ?? "Unknown"
+                                    );
+
+                                    $protocolClass =
+                                        strtolower($protocol);
+
+                                    ?>
+
+                                    <span
+                                        class="protocol <?= htmlspecialchars(
+                                            $protocolClass
+                                        ) ?>"
+                                    >
+                                        <?= htmlspecialchars($protocol) ?>
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <?= $packet["source_port"] !== null
+                                        ? htmlspecialchars(
+                                            $packet["source_port"]
+                                        )
+                                        : "-"
+                                    ?>
+
+                                </td>
+
+                                <td>
+
+                                    <?= $packet["destination_port"] !== null
+                                        ? htmlspecialchars(
+                                            $packet["destination_port"]
+                                        )
+                                        : "-"
+                                    ?>
+
+                                </td>
+
+                                <td>
+
+                                    <?= $packet["packet_size"] !== null
+                                        ? htmlspecialchars(
+                                            $packet["packet_size"]
+                                        ) . " bytes"
+                                        : "-"
+                                    ?>
+
+                                </td>
+
+                                <td>
+
+                                    <?= htmlspecialchars(
+                                        $packet["packet_info"]
+                                    ) ?>
+
+                                </td>
+
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    <?php endif; ?>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
 
 </div>
 
 
 <script>
 
-const captureButton = document.getElementById("captureButton");
-const captureMessage = document.getElementById("captureMessage");
+const captureButton =
+    document.getElementById("captureButton");
 
-captureButton.addEventListener("click", function () {
+const captureMessage =
+    document.getElementById("captureMessage");
 
-    captureButton.disabled = true;
-    captureButton.textContent = "Capturing...";
 
-    captureMessage.className = "capture-message";
-    captureMessage.textContent = "";
+captureButton.addEventListener(
+    "click",
+    function () {
 
-    fetch("/API/capture_packets.php")
+        captureButton.disabled = true;
 
-        .then(response => response.json())
+        captureButton.textContent =
+            "Capturing...";
 
-        .then(data => {
+        captureMessage.className =
+            "capture-message";
 
-            if (data.success) {
+        captureMessage.textContent = "";
 
-                let message =
-                    "Capture completed. "
-                    + data.saved_packets
-                    + " packets saved.";
 
-                if (
-                    data.port_scan_detections !== undefined
-                    && data.port_scan_detections > 0
-                ) {
+        fetch("../API/capture_packets.php")
 
-                    message +=
-                        " "
-                        + data.port_scan_detections
-                        + " port scanning detection(s) generated.";
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (data.success) {
+
+                    let message =
+                        "Capture completed. "
+                        + data.saved_packets
+                        + " packets saved.";
+
+                    if (
+                        data.port_scan_detections !== undefined
+                        &&
+                        data.port_scan_detections > 0
+                    ) {
+
+                        message +=
+                            " "
+                            + data.port_scan_detections
+                            + " port scanning detection(s) generated.";
+
+                    }
+
+                    captureMessage.className =
+                        "capture-message success";
+
+                    captureMessage.textContent =
+                        message;
+
+
+                    setTimeout(
+                        function () {
+
+                            window.location.reload();
+
+                        },
+                        1500
+                    );
+
+                } else {
+
+                    captureMessage.className =
+                        "capture-message error";
+
+                    captureMessage.textContent =
+                        data.message ||
+                        "Packet capture failed.";
 
                 }
 
-                captureMessage.className =
-                    "capture-message success";
+            })
 
-                captureMessage.textContent = message;
-
-                setTimeout(function () {
-
-                    window.location.reload();
-
-                }, 1500);
-
-            } else {
+            .catch(error => {
 
                 captureMessage.className =
                     "capture-message error";
 
                 captureMessage.textContent =
-                    data.message || "Packet capture failed.";
+                    "Unable to connect to the packet capture service.";
 
-            }
+            })
 
-        })
+            .finally(() => {
 
-        .catch(error => {
+                setTimeout(
+                    function () {
 
-            captureMessage.className =
-                "capture-message error";
+                        captureButton.disabled =
+                            false;
 
-            captureMessage.textContent =
-                "Unable to connect to the packet capture service.";
+                        captureButton.textContent =
+                            "Capture Packets";
 
-        })
+                    },
+                    1500
+                );
 
-        .finally(() => {
+            });
 
-            setTimeout(function () {
-
-                captureButton.disabled = false;
-                captureButton.textContent = "Capture Packets";
-
-            }, 1500);
-
-        });
-
-});
+    }
+);
 
 </script>
+
 
 </body>
 

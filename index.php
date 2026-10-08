@@ -86,14 +86,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             margin-bottom: 30px;
         }
 
-        .logo h1 {
-            font-size: 32px;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-
-        .logo h1 span {
-            color: #2563eb;
+        .logo img {
+            width: 220px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
         }
 
         .logo p {
@@ -162,9 +160,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="logo">
 
-            <h1>Trap<span>&</span>Trace</h1>
+            <img
+                src="assets/traptrace-logo.png"
+                alt="Trap&Trace"
+            >
 
-            <p>Honeypot Security Monitoring System</p>
+            <p>
+                Honeypot Security Monitoring System
+            </p>
 
         </div>
 
