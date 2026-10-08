@@ -17,6 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $ipAddress = $_SERVER["REMOTE_ADDR"] ?? "Unknown";
 
+    error_log("KV login IP check: " . json_encode([
+    "REMOTE_ADDR" => $_SERVER["REMOTE_ADDR"] ?? null,
+    "X_FORWARDED_FOR" => $_SERVER["HTTP_X_FORWARDED_FOR"] ?? null,
+    "X_REAL_IP" => $_SERVER["HTTP_X_REAL_IP"] ?? null
+]));
+
     /*
     |--------------------------------------------------------------------------
     | Successful Authorized Login
