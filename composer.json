@@ -1,0 +1,17 @@
+{
+    "name": "traptrace/honeypot",
+    "description": "TrapTrace - Network Honeypot Security System",
+    "type": "project",
+    "require": {
+        "php": "^8.0",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-json": "*",
+        "ext-session": "*"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
