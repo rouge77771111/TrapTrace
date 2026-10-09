@@ -21,13 +21,49 @@ Thumbs.db
 # Logs
 *.log
 error_log
+*.err
+mysql_error.log
 
 # Temporary files
 *.tmp
 *.temp
+*.pid
+*.dmp
 
 # Session files
 /sessions/
 
 # Cache
 /cache/
+
+# MySQL/MariaDB Database Files (XAMPP)
+mysql/
+phpmyadmin/
+performance_schema/
+traptrace/
+test/
+lab_exam/
+*.frm
+*.ibd
+*.MAD
+*.MAI
+*.CSM
+*.CSV
+aria_log*
+aria_log_control
+ib_buffer_pool
+ib_logfile*
+ibdata*
+ibtmp*
+multi-master.info
+my.ini
+mysql.pid
+*.pid
+
+# Docker files (if not using)
+Dockerfile
+railpack.json
+
+# XAMPP specific
+HELLO.err
+HELLO.pid
