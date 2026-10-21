@@ -50,6 +50,8 @@ In Railway dashboard, add these variables to your service:
 ```
 APP_ENV=production
 APP_DEBUG=false
+RECAPTCHA_SITE_KEY=your-google-recaptcha-site-key
+RECAPTCHA_SECRET_KEY=your-google-recaptcha-secret-key
 ```
 
 ## Step 5: Import Database Schema
